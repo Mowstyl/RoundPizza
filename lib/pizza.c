@@ -18,13 +18,16 @@ shuffle (int          *arr,   // Array a desordenar
   if (n > 1)
     {
       size_t i;
+      //printf ("{");
       for (i = 0; i < n - 1; i++)
         {
           size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
           int t = arr[j];
           arr[j] = arr[i];
           arr[i] = t;
+          //printf ("%d, ", arr[i]);
         }
+      //printf ("}\n");
     }
 }
 
@@ -99,7 +102,7 @@ pizzaRandom (int           maxval,      // Maximo numero de porciones
             {
               if (valpertype[typeth[j]] + scores[i] <= maxval)
                 {
-                  sols[i][ntypess[i]] = typeth[i];
+                  sols[i][ntypess[i]] = typeth[j];
                   ntypess[i]++;
                   scores[i] += valpertype[typeth[j]];
                 }
@@ -124,7 +127,7 @@ pizzaRandom (int           maxval,      // Maximo numero de porciones
         }
     }
 
-  for (i = 1; i < ntypess[best]; i++)
+  for (i = 0; i < ntypess[best]; i++)
     {
       solution[i] = sols[best][i];
     }
