@@ -1,0 +1,55 @@
+1 SIGNUP (MUTEX)
+2 SCAN (SHARED)
+
+Lista ScoreLibro
+Lista Librerias
+
+Clase Libreria
+  ID
+  Natural NLibros
+  Natural DiasSignUp
+  Natural LibrosPorDia
+  Conjunto IdLibros
+
+
+Devolver:
+  Num Boblio que hacen signup
+  IdBiblio2 NumLibrosEscaneados1
+  IdLibro11 ... IdLibro1X
+  IdBiblio2 NumLibrosEscaneados2
+  IdLibro21 ... IdLibro2Y
+  ...
+  IdBiblioN NumLibrosEscaneadosN
+  IdLibroN1 ... IdLibroNZ
+
+  int   nBib
+  int  *idBibs
+  int  *nBookBib
+  int **idBooksBib
+
+
+- REGISTRO DE LIBROS:
+- B libros -> CADA UNO SE ESCANEA UNA SOLA VEZ
+    - Cada libro tiene un score
+
+  - L librerias, cada una tiene:
+    - Colección de libros
+    - Tiempo de registro
+    - Número de libros que puede mandar a escanear por día
+
+  - D días para mandar a escanear libros
+    - Mandar un libro, escanearlo y devolverlo tarda UN DÍA
+
+  - Las librerías se registran UNA DE CADA VEZ
+  - El envío de libros se puede hacer EN PARALELO
+
+
+  IDEAS DE RESOLUCIÓN:
+    - Ordenar librerías por lo prometedoras que son:
+      - Calcular el valor de los libros de cada una, teniendo en cuenta que NO SE PUEDE ESCANEAR UN LIBRO MÁS DE UNA VEZ, y también el LÍMITE DE DÍAS
+      - Ordenarlas según ese score
+
+
+    - Ponderar tiempo de registro y score:
+      - Score / tiempo de registro
+      - (alpha) score + (1 - alpha) tiempo_de_registro
