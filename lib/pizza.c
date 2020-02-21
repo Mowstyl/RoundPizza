@@ -31,99 +31,131 @@ shuffle (int          *arr,   // Array a desordenar
     }
 }
 
-/* Devuelve el numero de bibliotecas signupeadas */
-int
-pizzaSolver (int    nLibros,    // Numero total de libros
-             int    maxDias,    // Dias limite para escaneo
-             int   *scores,     // Array con el valor de cada libro
-             int    nBib,       // Numero de bibliotecas
-             int   *nLibBib,    // nlibbib[id] <- numero de libros en biblioteca id
-             int   *heurBib,    // heurBib[id] <- heuristica de la biblioteca id
-             int   *suDayBib,   // sudaybib[id] <- dias en realizar signup
-             int   *boDayBib,   // bodaybib[id] <- libros a escanear por dia
-             int   *libBib,     // libbib[id] <- lista de ids de libros disponibles en la biblioteca id
-             int   *idBibs,     // *idBibs[i] <- ids bibliotecas signupeadas en orden de signupeo
-             int   *nBookBib,   // *nBookBib[i] <- numero de libros escaneados de biblioteca *idBibs[i]
-             int   *idBooksBib, // *idBooksBib[i] <- lista de ids de libros escaneados de biblioteca *idBibs[i]
-             int   *signUpNum)  // numero de bibliotecas signupeadas
+void
+printArray (unsigned int *array,
+            unsigned int  size)
 {
-  int *lectos, // La mascaraaaaaa
-      *biblios, // La mascaraaaaaa
-       dia,
-       singuBib, // Numero de bibliotecas singupeadas
-       singuId, // ID de la biblioteca siendo singupeada
-       remSingu, // Dias restantes para terminar el singu
-       i,
-       j,
-       b,
-       score,
-       totscore;
+  unsigned int i;
 
-  /*
-  printf ("%d libros\n", nLibros);
-  printf ("%d dias\n", maxDias);
-  for (i = 0; i < nLibros; i++)
-    printf ("%d, ", scores[i]);
-  printf ("puntos\n");
-  printf ("%d bibliotecas\n", nBib);
-  for (i = 0; i < nBib; i++)
-    printf ("%d, ", nLibBib[i]);
-  printf ("lib/bib\n");
-  for (i = 0; i < nBib; i++)
-    printf ("%d, ", suDayBib[i]);
-  printf ("dia/SIGNUP\n");
-  for (i = 0; i < nBib; i++)
-    printf ("%d, ", boDayBib[i]);
-  printf ("lib/dia\n");
-  for (i = 0; i < nBib; i++)
+  printf ("[");
+  if (size > 0)
     {
-      for (j = 0; j < nLibBib[i]; j++)
-        printf ("%d, ", libBib[i*nBib + j]);
-      printf ("libros en %d\n", i);
+      printf ("%u", array[0]);
+      for (i = 1; i < size; i++)
+        printf (", %u", array[i]);
     }
-  */
+  printf ("]");
+}
 
-  lectos = (int*) calloc (nLibros, sizeof (int));
-  biblios = (int*) calloc (nBib, sizeof (int));
-  singuBib = -1;
-  singuId = -1;
-  remSingu = 0;
+void
+printBib (Biblioteca *bib)
+{
+  printf ("Biblioteca %u\n", bib->id);
+  printf ("\t%u libros\n", bib->nLibros);
+  printf ("\t%u dias para registro\n", bib->diasReg);
+  printf ("\t%u libros/dia\n", bib->libDia);
+  printf ("\tLibros: ");
+  printArray (bib->idLibros, bib->nLibros);
+  printf ("\n");
+}
+
+/* Devuelve el score */
+unsigned int
+pizzaSolver (unsigned int  nLibros,     // Numero total de libros
+             unsigned int  nBib,        // Numero de bibliotecas
+             unsigned int  maxDias,     // Dias limite para escaneo
+             unsigned int *scores,      // Array con el valor de cada libro
+             Biblioteca   *bibs,        // Array de bibliotecas
+             unsigned int *idBibs,      // idBibs[i] <- ids bibliotecas signupeadas en orden de signupeo
+             unsigned int *nBookBib,    // nBookBib[i] <- numero de libros escaneados de biblioteca *idBibs[i]
+             unsigned int *idBooksBib,  // idBooksBib[i] <- lista de ids de libros escaneados de biblioteca *idBibs[i]
+             unsigned int *signUpNum)  // numero de bibliotecas signupeadas
+{
+  unsigned int *lectos, // La mascaraaaaaa
+               *biblios, // La mascaraaaaaa
+                dia,
+                singuBib, // Numero de bibliotecas singupeadas
+                singuId, // ID de la biblioteca siendo singupeada
+                remSingu, // Dias restantes para terminar el singu
+                i,
+                j,
+                b,
+                score,
+                totscore;
+
+  lectos = (unsigned int*) calloc (nLibros, sizeof (unsigned int));
+  biblios = (unsigned int*) calloc (nBib, sizeof (unsigned int));
+  singuBib = 0;
+  singuId = 0;
+  remSingu = bibs->diasReg + 1;
+  //printf ("%u libros y %u bibliotecas\n", nLibros, nBib);
+  //printf ("Scores: ");
+  //printArray (scores, nLibros);
+  //printf ("\n");
+  //printBib (bibs);
   for (dia = 0; dia < maxDias; dia++)
     {
+      //printf ("\nDia %u/%u:\n", dia + 1, maxDias);
+      //if (dia % 100 == 0)
+      //  printf ("\nDia %u/%u:\n", dia + 1, maxDias);
+      remSingu--;
       // SIGNUP
-      if (remSingu == 0 && singuBib < nBib-1)
+      if (remSingu == 0 && singuId < nBib)
         {
+          //printf ("Finalizado Signupeo de %u.\n", (bibs + singuId)->id);
           idBibs[singuBib] = singuId;
+          nBookBib[singuId] = 0;
           singuBib++;
           singuId++;
-          remSingu = suDayBib[singuId];
+          if (singuId < nBib)
+            {
+              remSingu = (bibs + singuId)->diasReg;
+              //printf ("Empezando Signupeo de %u.\n", (bibs + singuId)->id);
+              //printBib (bibs + singuId);
+            }
         }
-      remSingu--;
+      //else
+      //  {
+      //    if (singuId < nBib)
+      //      printf ("Signupeo de %u: %u dias restantes\n", (bibs + singuId)->id, remSingu);
+      //  }
 
       // SCAN
       for (i = 0; i < singuBib; i++)
         {
           if (biblios[i] == 0)
             {
-              for (j = 0; j < boDayBib[i]; j++)
+              //printf ("Escaneando libros de %u.\n", (bibs + i)->id);
+              for (j = 0; j < (bibs + i)->libDia; j++)
                 {
-                  b = mejorNoLecto(scores, lectos, nLibBib[i], libBib + i*nBib);
+                  //printf ("Lecidiendo\n");
+                  b = primerNoLecto(lectos, bibs + i);
+                  //printf ("Lecidido\n");
 
-                  if (b == -1)
+                  if (b == (bibs + i)->nLibros)
                     {
+                      //printf ("No quedan libros en %u.\n", (bibs + i)->id);
                       biblios[i] = 1;
+                      (bibs + i)->idLibros = (bibs + i)->idLibrosAux;
+                      (bibs + i)->nLibros = (bibs + i)->nLibrosAux;
                       break;
                     }
                   else
                     {
-                      lectos[b] = 1;
+                      //printf ("Escaneado libro %u.\n", (bibs + i)->idLibros[b]);
+                      lectos[(bibs + i)->idLibros[b]] = 1;
+                      idBooksBib[i * nLibros + nBookBib[i]] = (bibs + i)->idLibros[b];
                       nBookBib[i]++;
-                      idBooksBib[i * singuBib + (nBookBib[i]-1)] = b;
+                      (bibs + i)->idLibros = (bibs + i)->idLibros + b + 1;
+                      (bibs + i)->nLibros = (bibs + i)->nLibros - b - 1;
                     }
                 }
+              //printf ("Fin del escaneo de hoy en %u.\n", (bibs + i)->id);
             }
         }
+      //printf ("Se acabo el dia\n");
     }
+  //printf ("Fin simulacion!\n");
 
   score = 0;
   totscore = 0;
@@ -138,35 +170,28 @@ pizzaSolver (int    nLibros,    // Numero total de libros
           totscore += scores[i];
         }
     }
-  printf ("Obtenidos %d/%d\n", score, totscore);
+  //printf ("Obtenidos %d/%d\n", score, totscore);
   *signUpNum = singuBib;
 
   return score;
 }
 
-int
-mejorNoLecto (int *scores,
-              int *lectos,
-              int  nLibBib,
-              int *libBib)
+unsigned int
+primerNoLecto (unsigned int *lectos,
+               Biblioteca   *bib)
 {
-  int i,
-      primerId;
+  unsigned int i;
 
-  primerId = -1;
-  for (i = 0; i < nLibBib; i++)
+  for (i = 0; i < bib->nLibros; i++)
     {
-      //printf("forNOLECTO %d\n", libBib[i]);
-      if (lectos[libBib[i]] == 0)
-        {
-          //printf("RECTO\n");
-          primerId = libBib[i];
-          break;
-        }
+      //printf("Miau\n");
+      //printf("forNOLECTO %u\n", bib->idLibros[i]);
+      if (lectos[bib->idLibros[i]] == 0)
+        break;
     }
   //printf("haLecido\n");
 
-  return primerId;
+  return i;
 }
 
 /* Devuelve el numero de tipos en solution */

@@ -1,29 +1,41 @@
 #ifndef __PIZZA_H
 #define __PIZZA_H
 
+struct LibraryStruct
+{
+  /* Identificador de esta biblioteca */
+  unsigned int  id;
+  /* Numero de libros en esta biblioteca */
+  unsigned int  nLibros;
+  unsigned int  nLibrosAux;
+  /* Dias que tarda en realizar el signup */
+  unsigned int  diasReg;
+  /* Libros que se pueden sacar en un día */
+  unsigned int  libDia;
+  /* Array de ids de los libros disponibles en la biblioteca */
+  unsigned int *idLibros;
+  unsigned int *idLibrosAux;
+};
+
+typedef struct LibraryStruct Biblioteca;
+
 /* Desordena un array aleatoriamente */
 void shuffle    (int          *arr,        // Array a desordenar
                  size_t        n);          // Tamaño del array
 
 /* Devuelve el score */
-int pizzaSolver (int           nLibros,     // Numero total de libros
-                 int           maxDias,     // Dias limite para escaneo
-                 int          *scores,      // Array con el valor de cada libro
-                 int           nBib,        // Numero de bibliotecas
-                 int          *nLibBib,     // nlibbib[id] <- numero de libros en biblioteca id
-                 int          *heurBib,     // heurBib[id] <- heuristica de la biblioteca id
-                 int          *suDayBib,    // sudaybib[id] <- dias en realizar signup
-                 int          *boDayBib,    // bodaybib[id] <- libros a escanear por dia
-                 int          *libBib,      // libbib[id] <- lista de ids de libros disponibles en la biblioteca id
-                 int          *idBibs,      // idBibs[i] <- ids bibliotecas signupeadas en orden de signupeo
-                 int          *nBookBib,    // nBookBib[i] <- numero de libros escaneados de biblioteca *idBibs[i]
-                 int          *idBooksBib,  // idBooksBib[i] <- lista de ids de libros escaneados de biblioteca *idBibs[i]
-                 int          *signUpNum);  // numero de bibliotecas signupeadas
+unsigned int pizzaSolver (unsigned int  nLibros,     // Numero total de libros
+                          unsigned int  nBib,        // Numero de bibliotecas
+                          unsigned int  maxDias,     // Dias limite para escaneo
+                          unsigned int *scores,      // Array con el valor de cada libro
+                          Biblioteca   *bibs,        // Array de bibliotecas
+                          unsigned int *idBibs,      // idBibs[i] <- ids bibliotecas signupeadas en orden de signupeo
+                          unsigned int *nBookBib,    // nBookBib[i] <- numero de libros escaneados de biblioteca *idBibs[i]
+                          unsigned int *idBooksBib,  // idBooksBib[i] <- lista de ids de libros escaneados de biblioteca *idBibs[i]
+                          unsigned int *signUpNum);  // numero de bibliotecas signupeadas
 
-int mejorNoLecto (int *scores,
-                  int *lectos,
-                  int  nLibBib,
-                  int *libBib);
+unsigned int primerNoLecto (unsigned int *lectos,
+                            Biblioteca   *bib);
 
 /* Devuelve el numero de tipos en solution */
 int pizzaRandom (int           maxval,     // Maximo numero de porciones
