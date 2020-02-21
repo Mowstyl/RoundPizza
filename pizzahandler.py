@@ -30,7 +30,7 @@ __pizzaRandom__.argtypes = [ct.c_int, ct.c_int, c_int_p, c_int_p, c_int_p, ct.c_
 __pizzaRandom__.restype = ct.c_int
 
 
-def pedirLibros(nlib, nbib, maxd, scores, librerias):
+def pedirLibros(nlib, nbib, maxd, scores, librerias, ofile):
     array_libs = ct.c_int * nlib
     array_bibs = ct.c_int * nbib
     array_bibs_libs = ct.c_int * (nlib * nbib)
@@ -50,15 +50,28 @@ def pedirLibros(nlib, nbib, maxd, scores, librerias):
     #print([[libbib[i][j] for j in range(nlib)] for i in range(nbib)])
 
     #__pizzaSolver__.argtypes = [ct.c_int, ct.c_int, c_int_p, ct.c_int, c_int_p, c_int_p, c_int_p, c_int_p, array_bibs_libs, c_int_p, c_int_p, array_bibs_libs, c_int_p]
+    #print ("Miauadada")
+    score = int(__pizzaSolver__(ct.c_int(nlib), ct.c_int(maxd), array_libs(*scores), ct.c_int(nbib), array_bibs(*[ct.c_int(bib.n_books) for bib in librerias]), nullptr, array_bibs(*[ct.c_int(bib.signup_process) for bib in librerias]), array_bibs(*[ct.c_int(bib.ship) for bib in librerias]), libbib, idbibs, nbookbib, idbooksbib, signupnum))
 
-    score = int(__pizzaSolver__(ct.c_int(nlib), ct.c_int(maxd), array_libs(*scores), ct.c_int(nbib), array_bibs(*[ct.c_int(bib.n_books) for bib in librerias]), nullptr, array_bibs(*[ct.c_int(bib.signup_process) for bib in librerias]), array_bibs(*[ct.c_int(bib.ship) for bib in librerias]), libbib, idbibs, nbookbib, libbib, signupnum))
+    #print ("Miauaaa")
+    signupnumC = int(signupnum.contents.value)
+    #print ("Miaubbadab1 " + str(signupnumC))
+    idbibsC = idbibs[:signupnumC]
+    #print ("Miaubbadab2 " + str(idbibsC))
+    nbookbibC = nbookbib[:signupnumC]
+    #print ("Miaubbadab3 " + str(nbookbibC))
+    idbooksbibC = [[idbooksbib[i*signupnumC+j] for j in range(nbookbibC[i])] for i in range(signupnumC)]
+    #print ("Miaubbb")
 
-    signupnum = int(signupnum.contents.value)
-    idbibs = idbibs[:signupnum]
-    nbookbib = nbookbib[:signupnum]
-    idbooksbib = [[idbooksbib[i*signupnum+j] for j in range(nbookbib[i])] for i in range(signupnum)]
+    #print(score)
+    #print(signupnumC)
+    #print(idbibsC)
+    #print(nbookbibC)
+    #print(idbooksbibC)
+    fh.savePFile(ofile, signupnumC, idbibsC, nbookbibC, idbooksbibC)
+    print("Done!")
 
-    return score, signupnum, idbibs, nbookbib, idbooksbib
+    return score, signupnumC, idbibsC, nbookbibC, idbooksbibC
 
 def pedirPizzaRandom(maxSlices, nTypes, typeValues, niters, seed):
     int_array = ct.c_int * nTypes
@@ -93,8 +106,8 @@ def main(argv): # We expect to receive input file as first argument and output f
         return
     print ("Starting!")
     start = timer()
-    score, num_librerias, lista_librerias, num_libros_por_libreria, lista_libros_librerias = pedirLibros(nlib, nbib, maxd, scores, librerias)
-    # print ("miau")
+    score, num_librerias, lista_librerias, num_libros_por_libreria, lista_libros_librerias = pedirLibros(nlib, nbib, maxd, scores, librerias, output)
+    #print ("miau")
     #usedtyr, listtyr, scorer = pedirPizzaRandom(maxs, nty, values, niters, seed)
     # print ("miau")
     #if scorer > score:
@@ -103,8 +116,8 @@ def main(argv): # We expect to receive input file as first argument and output f
     #    score = scorer
     end = timer()
     print("\nTime elapsed: %.4f seconds." % round(end-start, 4))
-    print ("Score: " + str(score) + "/" + str(maxs))
-    fh.savePFile(output, num_librerias, lista_librerias, num_libros_por_libreria, lista_libros_librerias)
+    #print ("Score: " + str(score) + "/" + str(maxs))
+    #fh.savePFile(output, num_librerias, lista_librerias, num_libros_por_libreria, lista_libros_librerias)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
